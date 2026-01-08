@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tính Công Nhân Viên</title>
+    <!-- Google Fonts for Premium Feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- SheetJS for Excel Parsing -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="glass-container">
+        <header>
+            <h1>Quản Lý Giờ Công</h1>
+            <p class="subtitle">Hệ thống tính toán tự động từ tệp Excel</p>
+        </header>
+
+        <main>
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <div class="file-drop-area" id="drop-area">
+                    <span class="icon">📂</span>
+                    <p>Kéo thả file Excel vào đây hoặc click để chọn</p>
+                    <input type="file" id="file-input" accept=".xlsx, .xls">
+                </div>
+                <div id="file-info" class="hidden">
+                    <p>Đã chọn: <span id="filename"></span></p>
+                </div>
+            </section>
+
+            <!-- Control Panel (Hidden initially) -->
+            <section id="control-panel" class="hidden fade-in">
+                <div class="input-group">
+                    <label for="sheet-select">Chọn Sheet dữ liệu</label>
+                    <select id="sheet-select">
+                        <option value="">-- Chọn Sheet --</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="staff-select">Chọn Nhân viên</label>
+                    <select id="staff-select" disabled>
+                        <option value="">-- Trước tiên chọn Sheet --</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="result-section" class="hidden fade-in">
+                <!-- Attendance Summary (Only for QT Sheets) -->
+                <div id="attendance-view" class="hidden">
+                    <div class="card summary-card">
+                        <h2>Tổng Giờ Làm Việc</h2>
+                        <div class="total-hours" id="total-hours">0</div>
+                        <div class="total-days">Tổng số ca: <span id="total-shifts">0</span></div>
+                    </div>
+
+                    <div class="card details-card">
+                        <h3>Chi tiết chấm công tuần</h3>
+                        <div class="table-wrapper">
+                            <table id="details-table">
+                                <thead>
+                                    <tr>
+                                        <th>Ngày</th>
+                                        <th>Ca trực/Mã</th>
+                                        <th>Giờ vào/Chi tiết</th>
+                                        <th>Giờ ra</th>
+                                        <th>Số giờ</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flight Schedule View (Only for Daily Sheets) -->
+                <div id="flight-view" class="hidden">
+                    <div class="card details-card">
+                        <h3>Lịch Bay Phục Vụ</h3>
+                        <div class="table-wrapper">
+                            <table id="flights-table">
+                                <thead>
+                                    <tr>
+                                        <th>Số hiệu (Flight)</th>
+                                        <th>Giờ (ETD)</th>
+                                        <th>Vị trí (Position)</th>
+                                        <th>Cửa (Gate)</th> <!-- Optional context -->
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Debug/Inspector Section -->
+            <section id="inspector-section" class="hidden">
+                <details>
+                    <summary>🛠 Data Inspector (Dành cho Kỹ thuật)</summary>
+                    <pre id="debug-output"></pre>
+                </details>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
