@@ -134,6 +134,11 @@ header h1 {
     margin-bottom: 30px;
 }
 
+#control-panel {
+    position: relative;
+    z-index: 100;
+}
+
 .file-drop-area {
     border: 2px dashed var(--glass-border);
     border-radius: 16px;
@@ -240,6 +245,7 @@ input:focus {
 .searchable-select {
     position: relative;
     width: 100%;
+    z-index: 200;
 }
 
 .search-results {

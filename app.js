@@ -126,7 +126,7 @@ function initSearchBox(inputEl, resultsEl, selectEl, onSelect) {
     let currentStaffNames = [];
 
     // Helper to refresh names from the underlying select
-    const refreshNames = () => {
+    inputEl.refreshNames = () => {
         currentStaffNames = Array.from(selectEl.options)
             .map(opt => opt.value)
             .filter(v => v !== "");
@@ -134,10 +134,11 @@ function initSearchBox(inputEl, resultsEl, selectEl, onSelect) {
 
     // Filter and show results
     const filterResults = (query) => {
-        refreshNames();
-        const normalizedQuery = removeVietnameseTones(query.toLowerCase());
+        inputEl.refreshNames();
+        const normalizedQuery = removeVietnameseTones(query.toLowerCase().trim());
 
         const matches = currentStaffNames.filter(name => {
+            if (normalizedQuery === "") return true; // Show all if empty
             const normalizedName = removeVietnameseTones(name.toLowerCase());
             return normalizedName.includes(normalizedQuery);
         });
@@ -158,12 +159,19 @@ function initSearchBox(inputEl, resultsEl, selectEl, onSelect) {
     inputEl.addEventListener('input', (e) => filterResults(e.target.value));
 
     inputEl.addEventListener('focus', (e) => {
-        if (e.target.value.trim() !== '') filterResults(e.target.value);
+        e.target.select(); // Select current text for easy replacement
+        filterResults(e.target.value);
     });
 
-    // Close on blur (delayed to allow clicks)
+    // Close on blur (only if not clicking on results)
+    let isClickingResults = false;
+    resultsEl.addEventListener('mousedown', () => { isClickingResults = true; });
+
     inputEl.addEventListener('blur', () => {
-        setTimeout(() => resultsEl.classList.add('hidden'), 200);
+        setTimeout(() => {
+            if (!isClickingResults) resultsEl.classList.add('hidden');
+            isClickingResults = false;
+        }, 200);
     });
 
     resultsEl.addEventListener('click', (e) => {
@@ -175,6 +183,7 @@ function initSearchBox(inputEl, resultsEl, selectEl, onSelect) {
             resultsEl.classList.add('hidden');
             onSelect(val);
         }
+        isClickingResults = false;
     });
 }
 
