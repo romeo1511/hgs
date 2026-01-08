@@ -44,18 +44,86 @@
 
             <!-- Control Panel (Hidden initially) -->
             <section id="control-panel" class="hidden fade-in">
-                <div class="input-group">
-                    <label for="sheet-select">Chọn Sheet dữ liệu</label>
-                    <select id="sheet-select">
-                        <option value="">-- Chọn Sheet --</option>
-                    </select>
+                <!-- Mode Toggle -->
+                <div class="mode-toggle">
+                    <button class="mode-btn active" data-mode="sheet">Tổng hợp công</button>
+                    <button class="mode-btn" data-mode="day">Xem theo Ngày</button>
+                    <button class="mode-btn" data-mode="availability">Tìm NV Rảnh</button>
                 </div>
 
-                <div class="input-group">
-                    <label for="staff-select">Chọn Nhân viên</label>
-                    <select id="staff-select" disabled>
-                        <option value="">-- Trước tiên chọn Sheet --</option>
-                    </select>
+                <!-- Attendance Summary Mode (Formerly Sheet View) -->
+                <div id="sheet-mode-controls" class="mode-controls">
+                    <div class="input-group" style="display: none;">
+                        <label for="sheet-select">Chọn Sheet dữ liệu</label>
+                        <select id="sheet-select">
+                            <option value="">-- Chọn Sheet --</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="staff-search">Tìm Nhân viên (Tính công tuần)</label>
+                        <div class="searchable-select">
+                            <input type="text" id="staff-search" placeholder="Nhập tên nhân viên..." autocomplete="off">
+                            <div id="staff-results" class="search-results hidden"></div>
+                            <select id="staff-select" class="hidden"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day View Mode (New) -->
+                <div id="day-mode-controls" class="mode-controls hidden">
+                    <div class="input-group">
+                        <label for="day-select">Chọn Ngày trong tuần</label>
+                        <select id="day-select">
+                            <option value="">-- Chọn Ngày --</option>
+                            <option value="MON">Thứ 2 (MON)</option>
+                            <option value="TUE">Thứ 3 (TUE)</option>
+                            <option value="WED">Thứ 4 (WED)</option>
+                            <option value="THU">Thứ 5 (THU)</option>
+                            <option value="FRI">Thứ 6 (FRI)</option>
+                            <option value="SAT">Thứ 7 (SAT)</option>
+                            <option value="SUN">Chủ nhật (SUN)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="day-staff-search">Chọn Nhân viên</label>
+                        <div class="searchable-select">
+                            <input type="text" id="day-staff-search" placeholder="Nhập tên nhân viên..."
+                                autocomplete="off" disabled>
+                            <div id="day-staff-results" class="search-results hidden"></div>
+                            <select id="day-staff-select" class="hidden" disabled></select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Availability Search Mode (New) -->
+                <div id="availability-mode-controls" class="mode-controls hidden">
+                    <div class="input-group">
+                        <label for="avail-day-select">Chọn Ngày trong tuần</label>
+                        <select id="avail-day-select">
+                            <option value="">-- Chọn Ngày --</option>
+                            <option value="MON">Thứ 2 (MON)</option>
+                            <option value="TUE">Thứ 3 (TUE)</option>
+                            <option value="WED">Thứ 4 (WED)</option>
+                            <option value="THU">Thứ 5 (THU)</option>
+                            <option value="FRI">Thứ 6 (FRI)</option>
+                            <option value="SAT">Thứ 7 (SAT)</option>
+                            <option value="SUN">Chủ nhật (SUN)</option>
+                        </select>
+                    </div>
+                    <div class="row-inputs" style="display: flex; gap: 10px;">
+                        <div class="input-group" style="flex: 1;">
+                            <label for="avail-time-start">Từ giờ</label>
+                            <input type="time" id="avail-time-start" value="08:00">
+                        </div>
+                        <div class="input-group" style="flex: 1;">
+                            <label for="avail-time-end">Đến giờ</label>
+                            <input type="time" id="avail-time-end" value="12:00">
+                        </div>
+                    </div>
+                    <button id="search-avail-btn" class="upload-btn" style="margin-top: 10px; width: 100%;">
+                        <span>🔍 Tìm nhân viên rảnh</span>
+                    </button>
                 </div>
             </section>
 
@@ -104,6 +172,41 @@
                                 </thead>
                                 <tbody></tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Combined Day View (Shift + Flights) -->
+                <div id="day-view" class="hidden">
+                    <!-- Shift Info Card -->
+                    <div class="card shift-info-card">
+                        <h2>📅 Thông tin ca làm việc</h2>
+                        <div id="shift-info-content">
+                            <div class="shift-badge" id="shift-badge">--</div>
+                            <div class="shift-time" id="shift-time">--</div>
+                            <div class="shift-duration" id="shift-duration">--</div>
+                        </div>
+                    </div>
+
+                    <!-- Flight Timeline -->
+                    <div class="card flight-timeline-card">
+                        <h3>✈️ Lịch bay phục vụ trong ngày</h3>
+                        <div id="flight-timeline">
+                            <!-- Timeline items will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Availability Results (New) -->
+                <div id="availability-view" class="hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 id="avail-results-title">Danh sách nhân viên rảnh</h2>
+                        </div>
+                        <div class="card-content">
+                            <div id="avail-list" class="avail-grid">
+                                <!-- Available staff cards will be injected here -->
+                            </div>
                         </div>
                     </div>
                 </div>
